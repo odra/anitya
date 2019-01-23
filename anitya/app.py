@@ -33,6 +33,9 @@ import anitya.mail_logging
 from anitya import __version__
 
 
+app = flask.Flask(__name__)
+
+
 def create(config=None):
     """
     Create and configure a Flask application object.
@@ -45,7 +48,6 @@ def create(config=None):
     Returns:
         flask.Flask: The configured Flask application.
     """
-    app = flask.Flask(__name__)
 
     if config is None:
         config = anitya_config
