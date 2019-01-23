@@ -48,7 +48,7 @@ def create(config=None):
     Returns:
         flask.Flask: The configured Flask application.
     """
-
+    global app
     if config is None:
         config = anitya_config
     app.config.update(config)
