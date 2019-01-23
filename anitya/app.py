@@ -55,7 +55,7 @@ def create(config=None):
     initialize_db(config)
 
     app.register_blueprint(social_auth)
-    if len(social_models.UserSocialAuth.__table_args__) == 0:
+    #if len(social_models.UserSocialAuth.__table_args__) == 0:
         # This is a bit of a hack - this initialization call sets up the SQLAlchemy
         # models with our own models and multiple calls to this function will cause
         # SQLAlchemy to fail with sqlalchemy.exc.InvalidRequestError. Only calling it
@@ -65,7 +65,7 @@ def create(config=None):
         # the SOCIAL_AUTH_USER_MODEL, after the first time ``create`` has been called
         # will *not* cause the new configuration to be used for subsequent calls to
         # ``create``.
-        social_models.init_social(app, Session)
+    social_models.init_social(app, Session)
 
     login_manager = LoginManager()
     login_manager.user_loader(authentication.load_user_from_session)
