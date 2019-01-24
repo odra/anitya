@@ -8,6 +8,8 @@ Create Date: 2018-10-01 11:17:19.457383
 from alembic import op
 import sqlalchemy as sa
 
+from anitya.db.migrations import utils
+
 
 # revision identifiers, used by Alembic.
 revision = '24b6734e8565'
@@ -16,13 +18,14 @@ down_revision = '34b9bb5fa388'
 
 def upgrade():
     """ Add `created_on` date column to projects_versions table. """
-    op.add_column(
-        'projects_versions',
-        sa.Column(
-            'created_on',
-            sa.DateTime,
-            default=sa.func.current_timestamp())
-    )
+    if not utils.has_column('projects_versions', 'created_on'):
+        op.add_column(
+            'projects_versions',
+            sa.Column(
+                'created_on',
+                sa.DateTime,
+                default=sa.func.current_timestamp())
+        )
 
 
 def downgrade():

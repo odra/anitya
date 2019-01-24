@@ -8,6 +8,8 @@ Create Date: 2018-10-11 11:42:44.947483
 from alembic import op
 import sqlalchemy as sa
 
+from anitya.db.migrations import utils
+
 
 # revision identifiers, used by Alembic.
 revision = '6ac0e42df937'
@@ -19,19 +21,21 @@ def upgrade():
     Drop logs table.
     Add and fill check_successful column to projects table.
     """
-    op.drop_table('logs')
+    if utils.has_table('logs'):
+        op.drop_table('logs')
 
-    op.add_column(
-        'projects',
-        sa.Column(
-            'check_successful',
-            sa.Boolean,
-            default=None)
-    )
+    if not utils.has_column('projects', 'check_successful'):
+        op.add_column(
+            'projects',
+            sa.Column(
+                'check_successful',
+                sa.Boolean,
+                default=None)
+        )
 
     op.execute("""
         UPDATE projects
-        SET check_successful=TRUE
+        SET check_successful=1
         WHERE (logs='Version retrieved correctly'
         OR logs='No new version found')
         AND check_successful IS NULL
@@ -39,7 +43,7 @@ def upgrade():
 
     op.execute("""
         UPDATE projects
-        SET check_successful=FALSE
+        SET check_successful=0
         WHERE logs IS NOT NULL
         AND check_successful IS NULL
     """)

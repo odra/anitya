@@ -11,6 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 
 from anitya.lib import plugins
+from anitya.db.migrations import utils
 
 # revision identifiers, used by Alembic.
 revision = 'b9201d816075'
@@ -19,12 +20,18 @@ down_revision = '9c29da0af3af'
 
 def upgrade():
     """Drop the Backends and Ecosystems tables and remove foreign keys."""
-    op.drop_constraint(u'projects_backend_fkey', 'projects', type_='foreignkey')
-    op.drop_constraint(u'FK_ECOSYSTEM_FOR_PROJECT', 'projects', type_='foreignkey')
-    op.create_index(
-        op.f('ix_projects_ecosystem_name'), 'projects', ['ecosystem_name'], unique=False)
-    op.drop_table('ecosystems')
-    op.drop_table('backends')
+    # try:
+    #     op.drop_constraint(u'projects_backend_fkey', 'projects', type_='foreignkey')
+    #     op.drop_constraint(u'FK_ECOSYSTEM_FOR_PROJECT', 'projects', type_='foreignkey')
+    # except NotImplementedError:
+    #     print('Alter not supported')
+    # if not utils.has_index('projects', 'ix_projects_ecosystem_name'):
+    #     op.create_index(
+    #         op.f('ix_projects_ecosystem_name'), 'projects', ['ecosystem_name'], unique=False)
+    # for table in ['ecosystems', 'backends']:
+    #     if utils.has_table(table):
+    #         op.drop_table(table)
+    pass
 
 
 def downgrade():

@@ -12,6 +12,8 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.types import TypeDecorator, CHAR
 import sqlalchemy as sa
 
+from anitya.db.migrations import utils
+
 
 # revision identifiers, used by Alembic.
 revision = 'a52d2fe99d4f'
@@ -86,16 +88,19 @@ class GUID(TypeDecorator):
 
 def upgrade():
     """Add a "users" table."""
-    op.create_table(
-        'users',
-        sa.Column('id', GUID(), nullable=False),
-        sa.Column('email', sa.String(length=256), nullable=False),
-        sa.Column('username', sa.String(length=256), nullable=False),
-        sa.Column('active', sa.Boolean(), nullable=False),
-        sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
-    op.create_index(op.f('ix_users_username'), 'users', ['username'], unique=True)
+    if not utils.has_table('users'):
+        op.create_table(
+            'users',
+            sa.Column('id', GUID(), nullable=False),
+            sa.Column('email', sa.String(length=256), nullable=False),
+            sa.Column('username', sa.String(length=256), nullable=False),
+            sa.Column('active', sa.Boolean(), nullable=False),
+            sa.PrimaryKeyConstraint('id')
+        )
+    if not utils.has_index('users', 'ix_users_email'):
+        op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
+    if not utils.has_index('users', 'ix_users_username'):
+        op.create_index(op.f('ix_users_username'), 'users', ['username'], unique=True)
 
 
 def downgrade():

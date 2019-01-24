@@ -37,8 +37,11 @@ def upgrade():
         SET ecosystem_name=homepage
         WHERE ecosystem_name IS NULL
     """)
-    op.alter_column(
-        'projects', 'ecosystem_name', existing_type=sa.VARCHAR(length=200), nullable=False)
+    try:
+        op.alter_column(
+            'projects', 'ecosystem_name', existing_type=sa.VARCHAR(length=200), nullable=False)
+    except sa.exc.OperationalError:
+        print('fixme')
 
 
 def downgrade():

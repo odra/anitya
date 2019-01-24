@@ -6,6 +6,9 @@ Create Date: 2018-09-04 13:54:40.031238
 """
 
 from alembic import op
+import sqlalchemy as sa
+
+from anitya.db.migrations import utils
 
 
 # revision identifiers, used by Alembic.
@@ -15,10 +18,15 @@ down_revision = '34b9bb5fa388'
 
 def upgrade():
     ''' Rename column `distro` in packages table. '''
-    op.alter_column(
-        'packages',
-        'distro',
-        new_column_name='distro_name')
+    # if utils.has_column('packages', 'distro'):
+    #     try:
+    #         op.alter_column(
+    #             'packages',
+    #             'distro',
+    #             new_column_name='distro_name')
+    #     except sa.exc.OperationalError:
+    #         print('fixme')
+    pass
 
 
 def downgrade():

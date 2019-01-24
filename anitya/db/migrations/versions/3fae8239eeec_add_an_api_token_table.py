@@ -29,6 +29,8 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.types import TypeDecorator, CHAR
 import sqlalchemy as sa
 
+from anitya.db.migrations import utils
+
 
 # revision identifiers, used by Alembic.
 revision = '3fae8239eeec'
@@ -103,15 +105,16 @@ class GUID(TypeDecorator):
 
 def upgrade():
     """Create the ``tokens`` table."""
-    op.create_table(
-        'tokens',
-        sa.Column('token', sa.String(length=40), nullable=False),
-        sa.Column('created', sa.DateTime(), nullable=False),
-        sa.Column('user_id', GUID(), nullable=False),
-        sa.Column('description', sa.Text(), nullable=True),
-        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-        sa.PrimaryKeyConstraint('token')
-    )
+    if not utils.has_table('tokens'):
+        op.create_table(
+            'tokens',
+            sa.Column('token', sa.String(length=40), nullable=False),
+            sa.Column('created', sa.DateTime(), nullable=False),
+            sa.Column('user_id', GUID(), nullable=False),
+            sa.Column('description', sa.Text(), nullable=True),
+            sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+            sa.PrimaryKeyConstraint('token')
+        )
 
 
 def downgrade():
